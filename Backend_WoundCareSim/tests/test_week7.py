@@ -76,6 +76,7 @@ async def run_full_system_test():
 
     # Load scenario metadata for patient history
     scenario_meta = session_manager.get_session(session_id)["scenario_metadata"]
+    print(f"[SCENARIO METADATA LOADED] {scenario_meta}")
     patient_history = scenario_meta.get("patient_history", "")
 
     # =================================================

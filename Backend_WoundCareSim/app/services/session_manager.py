@@ -2,17 +2,15 @@ from app.core.state_machine import Step, next_step
 from typing import Optional, Dict, Any
 from datetime import datetime
 
+from app.services.scenario_loader import load_scenario
+
 
 class SessionManager:
     """
     Manages training sessions.
 
-    IMPORTANT:
-    - No step blocking
-    - No retry limits
-    - No safety locks
-    - Steps always advance
-    - Session is a timeline recorder, not a gatekeeper
+    Session is the runtime owner of scenario data.
+    Firestore is read ONCE at session creation.
     """
 
     def __init__(self):
@@ -30,17 +28,23 @@ class SessionManager:
     ) -> str:
         session_id = f"sess_{len(self.sessions) + 1}_{int(datetime.now().timestamp())}"
 
+        # ✅ Load scenario once (single source of truth)
+        if scenario_metadata is None:
+            scenario_metadata = load_scenario(scenario_id)
+
         self.sessions[session_id] = {
             "scenario_id": scenario_id,
             "student_id": student_id,
             "current_step": Step.HISTORY.value,
             "last_evaluation": None,
-            "scenario_metadata": scenario_metadata or {},
+            "scenario_metadata": scenario_metadata,
             "logs": [],
             "rag_results": [],
+            "action_events": [],
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
         }
+
         return session_id
 
     def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
