@@ -11,6 +11,7 @@ from app.services.action_event_service import ActionEventService
 from app.agents.communication_agent import CommunicationAgent
 from app.agents.knowledge_agent import KnowledgeAgent
 from app.agents.clinical_agent import ClinicalAgent
+from app.agents.patient_agent import PatientAgent
 
 
 # -------------------------------------------------
@@ -25,7 +26,7 @@ async def run_full_system_test():
     Manual end-to-end system validation (Week-7).
 
     VALIDATES:
-    - Multi-turn history taking
+    - Multi-turn history taking with real patient responses
     - Action-event ingestion
     - Feedback-only evaluation
     """
@@ -55,6 +56,8 @@ async def run_full_system_test():
     )
     action_service = ActionEventService(session_manager)
 
+    patient_agent = PatientAgent()
+
     agents = [
         CommunicationAgent(),
         KnowledgeAgent(),
@@ -71,8 +74,12 @@ async def run_full_system_test():
 
     print(f"[SESSION CREATED] {session_id}")
 
+    # Load scenario metadata for patient history
+    scenario_meta = session_manager.get_session(session_id)["scenario_metadata"]
+    patient_history = scenario_meta.get("patient_history", "")
+
     # =================================================
-    # HISTORY – Multi-turn conversation
+    # HISTORY – Multi-turn conversation (REAL patient)
     # =================================================
     print("\n================ HISTORY =================")
 
@@ -83,17 +90,32 @@ async def run_full_system_test():
     ]
 
     for msg in conversation:
+        # Store student message
         evaluation_service.conversation_manager.add_turn(
             session_id, "HISTORY", "student", msg
         )
         print("[STUDENT]", msg)
 
-        # Fake patient reply for test purposes
-        evaluation_service.conversation_manager.add_turn(
-            session_id, "HISTORY", "patient",
-            "Patient responds based on scenario history."
+        # Get conversation so far
+        conversation_history = evaluation_service.conversation_manager.conversations[
+            session_id
+        ]["HISTORY"]
+
+        # Generate real patient response
+        patient_response = await patient_agent.respond(
+            patient_history=patient_history,
+            conversation_history=conversation_history,
+            student_message=msg
         )
 
+        print("[PATIENT]", patient_response)
+
+        # Store patient response
+        evaluation_service.conversation_manager.add_turn(
+            session_id, "HISTORY", "patient", patient_response
+        )
+
+    # Prepare context for evaluation
     context = await evaluation_service.prepare_agent_context(
         session_id=session_id,
         scenario_id=scenario_id,
@@ -166,10 +188,7 @@ async def run_full_system_test():
     # =================================================
     print("\n================ CLEANING =================")
 
-    actions = [
-        "SKIP_HAND_WASH",
-        "CLEAN_WOUND"
-    ]
+    actions = ["SKIP_HAND_WASH", "CLEAN_WOUND"]
 
     for act in actions:
         action_service.record_action(
@@ -212,10 +231,7 @@ async def run_full_system_test():
     # =================================================
     print("\n================ DRESSING =================")
 
-    actions = [
-        "APPLY_DRESSING",
-        "SECURE_BANDAGE"
-    ]
+    actions = ["APPLY_DRESSING", "SECURE_BANDAGE"]
 
     for act in actions:
         action_service.record_action(
