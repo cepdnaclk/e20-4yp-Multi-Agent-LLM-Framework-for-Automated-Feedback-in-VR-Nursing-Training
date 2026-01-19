@@ -157,7 +157,6 @@ async def run_full_system_test():
 
     context = await evaluation_service.prepare_agent_context(
         session_id=session_id,
-        scenario_id=scenario_id,
         step="ASSESSMENT"
     )
 
@@ -200,7 +199,6 @@ async def run_full_system_test():
 
     context = await evaluation_service.prepare_agent_context(
         session_id=session_id,
-        scenario_id=scenario_id,
         step="CLEANING"
     )
 
@@ -243,7 +241,6 @@ async def run_full_system_test():
 
     context = await evaluation_service.prepare_agent_context(
         session_id=session_id,
-        scenario_id=scenario_id,
         step="DRESSING"
     )
 
