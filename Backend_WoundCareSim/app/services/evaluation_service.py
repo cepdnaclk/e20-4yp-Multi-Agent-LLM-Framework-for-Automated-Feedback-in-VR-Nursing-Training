@@ -113,6 +113,7 @@ class EvaluationService:
         )
 
         # ---- MCQ handling (ASSESSMENT only) ----
+        mcq_result = None
         if current_step == Step.ASSESSMENT:
             questions = session["scenario_metadata"].get(
                 "assessment_questions", []
@@ -131,6 +132,7 @@ class EvaluationService:
                     "summary": "No MCQ questions available"
                 }
 
+            # IMPORTANT: Include MCQ result in coordinator output for final response
             coordinator_output["mcq_result"] = mcq_result
 
         # ------------------------------------------------
@@ -200,17 +202,21 @@ class EvaluationService:
         # ------------------------------------------------
         # Week-9: Feedback Narration (Presentation Layer)
         # ------------------------------------------------
-        narrated_feedback = None
+        narrated_feedback_dict = None
 
         if self.feedback_narrator_agent:
             try:
-                narrated_feedback = await self.feedback_narrator_agent.narrate(
+                narrated_feedback_obj = await self.feedback_narrator_agent.narrate(
                     raw_feedback=raw_feedback_items,
                     step=current_step.value
                 )
-            except Exception:
+                # FIXED: Convert Pydantic model to dict for JSON serialization
+                if narrated_feedback_obj:
+                    narrated_feedback_dict = narrated_feedback_obj.model_dump()
+            except Exception as e:
                 # Fail-safe: narration must never break evaluation
-                narrated_feedback = None
+                print(f"Narration failed: {e}")
+                narrated_feedback_dict = None
 
         # ------------------------------------------------
         # Final payload
@@ -219,8 +225,12 @@ class EvaluationService:
             "step": current_step.value,
             "scores": coordinator_output.get("scores"),
             "raw_feedback": raw_feedback_items,
-            "narrated_feedback": narrated_feedback,
+            "narrated_feedback": narrated_feedback_dict,
         }
+
+        # FIXED: Include MCQ result in final payload for ASSESSMENT step
+        if mcq_result is not None:
+            payload["mcq_result"] = mcq_result
 
         self.session_manager.store_last_evaluation(
             session_id=session_id,

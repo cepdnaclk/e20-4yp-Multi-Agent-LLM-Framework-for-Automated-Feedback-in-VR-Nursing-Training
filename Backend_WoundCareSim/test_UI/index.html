@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Nursing Education System - Test UI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏥 VR Nursing Education System</h1>
+            <p class="subtitle">Backend Testing Interface</p>
+        </header>
+
+        <!-- Session Info Bar -->
+        <div class="session-info" id="sessionInfo" style="display: none;">
+            <div class="info-item">
+                <strong>Session ID:</strong> <span id="sessionId">-</span>
+            </div>
+            <div class="info-item">
+                <strong>Current Step:</strong> <span id="currentStep" class="step-badge">-</span>
+            </div>
+            <div class="info-item">
+                <strong>Scenario:</strong> <span id="scenarioTitle">-</span>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="screen" id="startScreen">
+            <div class="card">
+                <h2>🚀 Start New Session</h2>
+                <p>Enter your details to begin the nursing procedure simulation.</p>
+                
+                <div class="form-group">
+                    <label for="scenarioId">Scenario ID:</label>
+                    <input type="text" id="scenarioId" value="scenario_001" placeholder="Enter scenario ID">
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentId">Student ID:</label>
+                    <input type="text" id="studentId" value="student_123" placeholder="Enter your student ID">
+                </div>
+                
+                <button class="btn btn-primary btn-large" onclick="startSession()">
+                    Start Session
+                </button>
+                
+                <div class="info-box">
+                    <strong>ℹ️ Note:</strong> This is a test interface to verify backend functionality before VR/React integration.
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY Step -->
+        <div class="screen" id="historyScreen" style="display: none;">
+            <div class="step-header">
+                <h2>Step 1: Patient History</h2>
+                <p>Ask the patient questions to gather their medical history.</p>
+            </div>
+
+            <div class="main-content">
+                <!-- Conversation Area -->
+                <div class="card">
+                    <h3>💬 Patient Conversation</h3>
+                    <div class="conversation-box" id="conversationBox">
+                        <div class="conversation-empty">
+                            Start by asking the patient a question...
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="patientQuestion" 
+                            placeholder="Type your question here..."
+                            onkeypress="handleEnter(event, sendMessage)"
+                        >
+                        <button class="btn btn-primary" onclick="sendMessage()">
+                            Send
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Staff Nurse -->
+                <div class="card">
+                    <h3>👩‍⚕️ Staff Nurse Guidance</h3>
+                    <div class="staff-nurse-response" id="staffNurseHistory">
+                        <p class="text-muted">Ask the staff nurse for guidance anytime...</p>
+                    </div>
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="nurseQuestionHistory" 
+                            placeholder="Ask staff nurse..."
+                            onkeypress="handleEnter(event, askStaffNurse)"
+                        >
+                        <button class="btn btn-secondary" onclick="askStaffNurse()">
+                            Ask Nurse
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-success btn-large" onclick="finishStep('history')">
+                    Finish History Step →
+                </button>
+            </div>
+        </div>
+
+        <!-- ASSESSMENT Step -->
+        <div class="screen" id="assessmentScreen" style="display: none;">
+            <div class="step-header">
+                <h2>Step 2: Wound Assessment</h2>
+                <p>Answer the multiple-choice questions to assess the wound.</p>
+            </div>
+
+            <div class="main-content">
+                <!-- MCQ Area -->
+                <div class="card">
+                    <h3>📋 Assessment Questions</h3>
+                    <div id="mcqContainer">
+                        <!-- MCQ questions will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Staff Nurse -->
+                <div class="card">
+                    <h3>👩‍⚕️ Staff Nurse Guidance</h3>
+                    <div class="staff-nurse-response" id="staffNurseAssessment">
+                        <p class="text-muted">Ask the staff nurse for guidance anytime...</p>
+                    </div>
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="nurseQuestionAssessment" 
+                            placeholder="Ask staff nurse..."
+                            onkeypress="handleEnter(event, askStaffNurse)"
+                        >
+                        <button class="btn btn-secondary" onclick="askStaffNurse()">
+                            Ask Nurse
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-success btn-large" onclick="finishStep('assessment')">
+                    Finish Assessment Step →
+                </button>
+            </div>
+        </div>
+
+        <!-- CLEANING Step -->
+        <div class="screen" id="cleaningScreen" style="display: none;">
+            <div class="step-header">
+                <h2>Step 3: Wound Cleaning</h2>
+                <p>Perform the wound cleaning procedure by clicking the action buttons.</p>
+            </div>
+
+            <div class="main-content">
+                <!-- Actions Area -->
+                <div class="card">
+                    <h3>🧼 Cleaning Actions</h3>
+                    <div class="actions-counter">
+                        <strong>Actions Recorded:</strong> <span id="cleaningCounter">0</span>
+                    </div>
+                    <div class="actions-grid" id="cleaningActions">
+                        <!-- Action buttons will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Staff Nurse -->
+                <div class="card">
+                    <h3>👩‍⚕️ Staff Nurse Guidance</h3>
+                    <div class="staff-nurse-response" id="staffNurseCleaning">
+                        <p class="text-muted">Ask the staff nurse for guidance anytime...</p>
+                    </div>
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="nurseQuestionCleaning" 
+                            placeholder="Ask staff nurse..."
+                            onkeypress="handleEnter(event, askStaffNurse)"
+                        >
+                        <button class="btn btn-secondary" onclick="askStaffNurse()">
+                            Ask Nurse
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-success btn-large" onclick="finishStep('cleaning')">
+                    Finish Cleaning Step →
+                </button>
+            </div>
+        </div>
+
+        <!-- DRESSING Step -->
+        <div class="screen" id="dressingScreen" style="display: none;">
+            <div class="step-header">
+                <h2>Step 4: Wound Dressing</h2>
+                <p>Apply the wound dressing by clicking the action buttons.</p>
+            </div>
+
+            <div class="main-content">
+                <!-- Actions Area -->
+                <div class="card">
+                    <h3>🩹 Dressing Actions</h3>
+                    <div class="actions-counter">
+                        <strong>Actions Recorded:</strong> <span id="dressingCounter">0</span>
+                    </div>
+                    <div class="actions-grid" id="dressingActions">
+                        <!-- Action buttons will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Staff Nurse -->
+                <div class="card">
+                    <h3>👩‍⚕️ Staff Nurse Guidance</h3>
+                    <div class="staff-nurse-response" id="staffNurseDressing">
+                        <p class="text-muted">Ask the staff nurse for guidance anytime...</p>
+                    </div>
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="nurseQuestionDressing" 
+                            placeholder="Ask staff nurse..."
+                            onkeypress="handleEnter(event, askStaffNurse)"
+                        >
+                        <button class="btn btn-secondary" onclick="askStaffNurse()">
+                            Ask Nurse
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-success btn-large" onclick="finishStep('dressing')">
+                    Finish Dressing Step →
+                </button>
+            </div>
+        </div>
+
+        <!-- Feedback Modal -->
+        <div class="modal" id="feedbackModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📊 Step Evaluation</h2>
+                    <button class="close-btn" onclick="closeFeedbackModal()">×</button>
+                </div>
+                
+                <div class="modal-body" id="feedbackContent">
+                    <!-- Feedback will be inserted here -->
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-large" onclick="continueToNextStep()">
+                        Continue to Next Step →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Screen -->
+        <div class="screen" id="completionScreen" style="display: none;">
+            <div class="card completion-card">
+                <div class="completion-icon">🎉</div>
+                <h2>Session Complete!</h2>
+                <p>Congratulations! You have completed all procedural steps.</p>
+                
+                <div class="completion-summary" id="completionSummary">
+                    <!-- Final summary will be shown here -->
+                </div>
+                
+                <button class="btn btn-primary btn-large" onclick="location.reload()">
+                    Start New Session
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading" id="loadingSpinner" style="display: none;">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -40,6 +40,7 @@ class SessionManager:
             "logs": [],
             "rag_results": [],
             "action_events": [],
+            "mcq_answers": {},  # NEW: Store MCQ answers for ASSESSMENT step
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
         }
