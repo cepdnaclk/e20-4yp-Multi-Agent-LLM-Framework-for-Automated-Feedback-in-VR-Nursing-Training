@@ -24,6 +24,23 @@ class ClinicalAgent(BaseAgent):
         Evaluate clinical correctness and return a structured object.
         """
 
+        # CRITICAL: Check for empty input (no actions performed)
+        # student_input for CLEANING/DRESSING contains stringified action_events list
+        if not student_input or student_input.strip() in ["", "[]", "None"]:
+            return EvaluatorResponse(
+                agent_name="ClinicalAgent",
+                step=current_step,
+                strengths=[],
+                issues_detected=[
+                    "No clinical actions performed",
+                    "Procedure not attempted",
+                    "Critical safety protocols not followed"
+                ],
+                explanation=f"The student did not perform any clinical actions for the {current_step} step. This is a mandatory procedural step that cannot be skipped. Patient safety requires proper wound {current_step} technique.",
+                verdict="Inappropriate",
+                confidence=1.0
+            )
+
         system_prompt = (
             "You are a nursing clinical skills evaluator.\n"
             "Your role is to evaluate ONLY clinical and procedural correctness.\n\n"
@@ -41,6 +58,8 @@ class ClinicalAgent(BaseAgent):
             "- Output RAW JSON only. No markdown formatting.\n"
             "- Do NOT evaluate communication style.\n"
             "- Prioritize patient safety above all else.\n"
+            "- Base evaluation ONLY on the actual actions provided.\n"
+            "- Do NOT assume or invent student actions.\n"
         )
 
         user_prompt = (

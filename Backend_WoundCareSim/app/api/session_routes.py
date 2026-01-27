@@ -336,10 +336,13 @@ async def run_step(payload: StepInput):
         # Use stored MCQ answers from session
         mcq_answers = session.get("mcq_answers", payload.student_mcq_answers or {})
         
+        # Pass empty string if no answers, so KnowledgeAgent can detect it
+        assessment_input = "MCQ Assessment completed" if mcq_answers else ""
+        
         evaluator_outputs.append(
             await knowledge_agent.evaluate(
                 current_step=current_step,
-                student_input="MCQ Assessment",
+                student_input=assessment_input,
                 scenario_metadata=context["scenario_metadata"],
                 rag_response=context["rag_context"]
             )

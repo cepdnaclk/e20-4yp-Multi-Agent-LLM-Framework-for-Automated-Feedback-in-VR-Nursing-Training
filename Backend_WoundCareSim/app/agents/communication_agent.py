@@ -21,6 +21,22 @@ class CommunicationAgent(BaseAgent):
         rag_response: str,
     ) -> EvaluatorResponse:
         
+        # CRITICAL: Check for empty input first
+        if not student_input or student_input.strip() == "":
+            return EvaluatorResponse(
+                agent_name="CommunicationAgent",
+                step=current_step,
+                strengths=[],
+                issues_detected=[
+                    "No communication with patient detected",
+                    "Patient history gathering is mandatory",
+                    "Failed to establish rapport"
+                ],
+                explanation="The student did not engage in any conversation with the patient. Gathering patient history through effective communication is a critical first step in wound care. Without patient interaction, essential information about allergies, pain levels, and medical history cannot be obtained.",
+                verdict="Inappropriate",
+                confidence=1.0
+            )
+        
         # 1. Update Prompt to FORCE JSON output matching your Schema
         system_prompt = (
             "You are a nursing communication evaluator.\n"
@@ -38,6 +54,8 @@ class CommunicationAgent(BaseAgent):
             "Rules:\n"
             "- Do NOT include markdown formatting like ```json ... ```\n"
             "- Output RAW JSON only.\n"
+            "- Base evaluation ONLY on the actual student input provided.\n"
+            "- Do NOT assume or invent student actions.\n"
         )
 
         user_prompt = (

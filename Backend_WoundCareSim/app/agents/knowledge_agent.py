@@ -23,6 +23,24 @@ class KnowledgeAgent(BaseAgent):
         Evaluate nursing knowledge and return a structured object.
         """
 
+        # CRITICAL: Check for empty input first
+        # For HISTORY step, empty input means no conversation
+        # For ASSESSMENT step, this check won't trigger (MCQ logic is separate)
+        if current_step == "history" and (not student_input or student_input.strip() == ""):
+            return EvaluatorResponse(
+                agent_name="KnowledgeAgent",
+                step=current_step,
+                strengths=[],
+                issues_detected=[
+                    "No patient history obtained",
+                    "Failed to gather critical medical information",
+                    "Cannot assess without patient data"
+                ],
+                explanation="The student did not gather any patient history. Understanding the patient's medical background, allergies, current medications, and surgical history is essential for safe wound care. Without this knowledge, the student cannot make informed clinical decisions.",
+                verdict="Inappropriate",
+                confidence=1.0
+            )
+
         system_prompt = (
             "You are a nursing knowledge evaluator.\n"
             "Your task is to evaluate ONLY the student's nursing knowledge and reasoning.\n\n"
@@ -40,6 +58,8 @@ class KnowledgeAgent(BaseAgent):
             "- Output RAW JSON only. No markdown formatting.\n"
             "- Do NOT evaluate physical execution (clinical skills).\n"
             "- Do NOT evaluate politeness (communication).\n"
+            "- Base evaluation ONLY on the actual student input provided.\n"
+            "- Do NOT assume or invent student knowledge.\n"
         )
 
         user_prompt = (

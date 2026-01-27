@@ -135,6 +135,7 @@ async function loadSessionInfo() {
 // ==========================================
 
 function showHistoryStep() {
+    currentSession.currentStep = 'history'; // Update session state
     showScreen('historyScreen');
     document.getElementById('currentStep').textContent = 'history';
     
@@ -194,6 +195,7 @@ function addMessageToConversation(speaker, text) {
 // ==========================================
 
 function showAssessmentStep() {
+    currentSession.currentStep = 'assessment'; // Update session state
     showScreen('assessmentScreen');
     document.getElementById('currentStep').textContent = 'assessment';
     
@@ -262,7 +264,7 @@ async function selectMCQOption(questionId, answer) {
         // Show status
         statusSpan.style.display = 'block';
         statusSpan.className = `mcq-status ${response.status}`;
-        statusSpan.textContent = response.is_correct ? '✓ Correct' : '✗ Incorrect';
+        statusSpan.textContent = response.is_correct ? 'Correct' : 'Incorrect';
         
         // Mark question as answered
         questionDiv.classList.add('answered', response.status);
@@ -286,6 +288,7 @@ async function selectMCQOption(questionId, answer) {
 // ==========================================
 
 function showCleaningStep() {
+    currentSession.currentStep = 'cleaning'; // Update session state
     showScreen('cleaningScreen');
     document.getElementById('currentStep').textContent = 'cleaning';
     currentSession.actionCounter.cleaning = 0;
@@ -298,13 +301,13 @@ function loadCleaningActions() {
     const container = document.getElementById('cleaningActions');
     
     const cleaningActions = [
-        { type: 'handwash', label: '🧼 Wash Hands' },
-        { type: 'wear_gloves', label: '🧤 Put on Gloves' },
-        { type: 'prepare_solution', label: '💧 Prepare Cleaning Solution' },
-        { type: 'clean_wound_center', label: '🎯 Clean Wound Center' },
-        { type: 'clean_wound_outward', label: '↗️ Clean Outward from Center' },
-        { type: 'dispose_materials', label: '🗑️ Dispose of Materials' },
-        { type: 'remove_gloves', label: '🧤 Remove Gloves' }
+        { type: 'handwash', label: 'Wash Hands' },
+        { type: 'wear_gloves', label: 'Put on Gloves' },
+        { type: 'prepare_solution', label: 'Prepare Cleaning Solution' },
+        { type: 'clean_wound_center', label: 'Clean Wound Center' },
+        { type: 'clean_wound_outward', label: 'Clean Outward from Center' },
+        { type: 'dispose_materials', label: 'Dispose of Materials' },
+        { type: 'remove_gloves', label: 'Remove Gloves' }
     ];
     
     container.innerHTML = '';
@@ -313,7 +316,7 @@ function loadCleaningActions() {
         button.className = 'action-btn';
         button.onclick = () => recordAction(action.type, 'cleaning');
         button.innerHTML = `
-            <span class="checkmark">✓</span>
+            <span class="checkmark">✔</span>
             <span>${action.label}</span>
         `;
         container.appendChild(button);
@@ -345,6 +348,7 @@ async function recordAction(actionType, step) {
 // ==========================================
 
 function showDressingStep() {
+    currentSession.currentStep = 'dressing'; // Update session state
     showScreen('dressingScreen');
     document.getElementById('currentStep').textContent = 'dressing';
     currentSession.actionCounter.dressing = 0;
@@ -357,12 +361,12 @@ function loadDressingActions() {
     const container = document.getElementById('dressingActions');
     
     const dressingActions = [
-        { type: 'select_dressing', label: '📋 Select Appropriate Dressing' },
-        { type: 'prepare_dressing', label: '✂️ Prepare Dressing' },
-        { type: 'apply_dressing', label: '🩹 Apply Dressing to Wound' },
-        { type: 'secure_tape', label: '📌 Secure with Tape' },
-        { type: 'check_fit', label: '✅ Check Dressing Fit' },
-        { type: 'document', label: '📝 Document Procedure' }
+        { type: 'select_dressing', label: 'Select Appropriate Dressing' },
+        { type: 'prepare_dressing', label: 'Prepare Dressing' },
+        { type: 'apply_dressing', label: 'Apply Dressing to Wound' },
+        { type: 'secure_tape', label: 'Secure with Tape' },
+        { type: 'check_fit', label: 'Check Dressing Fit' },
+        { type: 'document', label: 'Document Procedure' }
     ];
     
     container.innerHTML = '';
@@ -371,7 +375,7 @@ function loadDressingActions() {
         button.className = 'action-btn';
         button.onclick = () => recordAction(action.type, 'dressing');
         button.innerHTML = `
-            <span class="checkmark">✓</span>
+            <span class="checkmark">✔</span>
             <span>${action.label}</span>
         `;
         container.appendChild(button);
@@ -440,11 +444,52 @@ function displayFeedback(evaluation) {
     
     let html = '';
     
+    // ASSESSMENT step: MCQ-only display (no agent feedback, no scores)
+    if (evaluation.step === 'assessment' && evaluation.mcq_result) {
+        html += `
+            <div class="feedback-section">
+                <h3>MCQ Assessment Results</h3>
+                <div class="mcq-summary">
+                    <div class="mcq-summary-header">
+                        <span><strong>Summary:</strong> ${evaluation.mcq_result.summary}</span>
+                        <span class="mcq-score-display">${evaluation.mcq_result.correct_count}/${evaluation.mcq_result.total_questions}</span>
+                    </div>
+                    <div class="mcq-results">
+        `;
+        
+        if (evaluation.mcq_result.feedback) {
+            evaluation.mcq_result.feedback.forEach(item => {
+                const statusClass = item.status === 'correct' ? 'correct' : 
+                                   item.status === 'incorrect' ? 'incorrect' : 'not_answered';
+                const statusText = item.status === 'correct' ? 'Correct' : 
+                                  item.status === 'incorrect' ? 'Incorrect' : 'Not Answered';
+                
+                html += `
+                    <div class="mcq-result-item ${statusClass}">
+                        <strong>Q: ${item.question}</strong><br>
+                        <span class="mcq-status-badge ${statusClass}">${statusText}</span><br>
+                        ${item.student_answer ? `Your answer: ${item.student_answer}<br>` : ''}
+                        Correct answer: ${item.correct_answer}<br>
+                        <em>${item.explanation}</em>
+                    </div>
+                `;
+            });
+        }
+        
+        html += `</div></div></div>`;
+        
+        content.innerHTML = html;
+        modal.style.display = 'flex';
+        return;
+    }
+    
+    // OTHER STEPS: Normal agent feedback display
+    
     // Narrated Feedback (Primary)
     if (evaluation.narrated_feedback) {
         html += `
             <div class="feedback-section">
-                <h3>💬 Feedback Summary</h3>
+                <h3>Feedback Summary</h3>
                 <div class="narrated-feedback">
                     ${evaluation.narrated_feedback.message_text}
                 </div>
@@ -456,7 +501,7 @@ function displayFeedback(evaluation) {
     if (evaluation.scores) {
         html += `
             <div class="feedback-section">
-                <h3>📊 Performance Scores</h3>
+                <h3>Performance Scores</h3>
                 <div class="scores-display">
         `;
         
@@ -492,40 +537,11 @@ function displayFeedback(evaluation) {
         html += `</div></div>`;
     }
     
-    // MCQ Results (ASSESSMENT only)
-    if (evaluation.mcq_result) {
-        html += `
-            <div class="feedback-section">
-                <h3>📝 MCQ Assessment Results</h3>
-                <div class="mcq-summary">
-                    <div class="mcq-summary-header">
-                        <span><strong>Summary:</strong> ${evaluation.mcq_result.summary}</span>
-                        <span class="mcq-score-display">${evaluation.mcq_result.score.toFixed(2)}</span>
-                    </div>
-                    <div class="mcq-results">
-        `;
-        
-        if (evaluation.mcq_result.feedback) {
-            evaluation.mcq_result.feedback.forEach(item => {
-                html += `
-                    <div class="mcq-result-item ${item.status}">
-                        <strong>Q: ${item.question}</strong><br>
-                        Your answer: ${item.student_answer || 'Not answered'}<br>
-                        Correct answer: ${item.correct_answer}<br>
-                        <em>${item.explanation}</em>
-                    </div>
-                `;
-            });
-        }
-        
-        html += `</div></div></div>`;
-    }
-    
-    // Raw Feedback (Detailed)
+    // Raw Feedback (Detailed) - NOT for ASSESSMENT step
     if (evaluation.raw_feedback && evaluation.raw_feedback.length > 0) {
         html += `
             <div class="feedback-section">
-                <h3>🔍 Detailed Agent Feedback</h3>
+                <h3>Detailed Agent Feedback</h3>
                 <div class="raw-feedback">
         `;
         
@@ -576,6 +592,7 @@ function continueToNextStep() {
 // ==========================================
 
 function showCompletionScreen() {
+    currentSession.currentStep = 'completed'; // Update session state
     showScreen('completionScreen');
     document.getElementById('currentStep').textContent = 'completed';
     

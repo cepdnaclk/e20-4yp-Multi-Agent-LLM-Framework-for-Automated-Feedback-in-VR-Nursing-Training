@@ -119,18 +119,40 @@ class EvaluationService:
                 "assessment_questions", []
             )
 
-            if questions and student_mcq_answers:
+            if not questions:
+                # No questions in scenario
+                mcq_result = {
+                    "total_questions": 0,
+                    "correct_count": 0,
+                    "score": 0.0,
+                    "feedback": [],
+                    "summary": "No MCQ questions available in scenario"
+                }
+            elif not student_mcq_answers or len(student_mcq_answers) == 0:
+                # Questions exist but student didn't answer any
+                mcq_result = {
+                    "total_questions": len(questions),
+                    "correct_count": 0,
+                    "score": 0.0,
+                    "feedback": [
+                        {
+                            "question_id": q.get("id"),
+                            "question": q.get("question", ""),
+                            "status": "not_answered",
+                            "student_answer": None,
+                            "correct_answer": q.get("correct_answer"),
+                            "explanation": "This question was not answered."
+                        }
+                        for q in questions
+                    ],
+                    "summary": f"0/{len(questions)} questions answered - Assessment incomplete"
+                }
+            else:
+                # Normal evaluation with answers
                 mcq_result = self.mcq_evaluator.validate_mcq_answers(
                     student_answers=student_mcq_answers,
                     assessment_questions=questions
                 )
-            else:
-                mcq_result = {
-                    "total_questions": 0,
-                    "correct_count": 0,
-                    "feedback": [],
-                    "summary": "No MCQ questions available"
-                }
 
             # IMPORTANT: Include MCQ result in coordinator output for final response
             coordinator_output["mcq_result"] = mcq_result

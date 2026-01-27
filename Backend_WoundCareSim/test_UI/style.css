@@ -356,6 +356,30 @@ input[type="password"]:focus {
     color: white;
 }
 
+.mcq-status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 8px 0;
+}
+
+.mcq-status-badge.correct {
+    background: var(--success-color);
+    color: white;
+}
+
+.mcq-status-badge.incorrect {
+    background: var(--danger-color);
+    color: white;
+}
+
+.mcq-status-badge.not_answered {
+    background: var(--secondary-color);
+    color: white;
+}
+
 .question-text {
     font-size: 1.1rem;
     margin-bottom: 15px;
