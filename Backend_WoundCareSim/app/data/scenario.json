@@ -6,21 +6,33 @@
     "name": "Mr. Sunil Perera",
     "age": 52,
     "gender": "Male",
+    "address": "Hindagala",
+
     "medical_history": [
       "Hypertension"
     ],
+
     "allergies": [
-      "Penicillin"
+      {
+        "substance": "Penicillin",
+        "reaction": "Not specified"
+      }
     ],
+
     "current_medications": [
       "Amlodipine 5mg daily"
     ],
+
     "surgery_details": {
       "procedure": "Open reduction and internal fixation of left forearm fracture",
       "date": "2025-01-10",
       "surgeon": "Dr. K. Fernando"
     },
-    "pain_level": "Mild pain at the surgical site"
+
+    "pain_level": {
+      "description": "Mild pain at the surgical site",
+      "pain_score": 2
+    }
   },
 
   "wound_details": {

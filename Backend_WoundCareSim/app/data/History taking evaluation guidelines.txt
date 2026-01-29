@@ -1,175 +1,141 @@
 HISTORY TAKING GUIDELINES
-For Post-Operative Wound Care
+Post-Operative Wound Care
 
-================================================================================
 PURPOSE
-================================================================================
 
-Gather essential patient information before performing wound care to ensure 
-safe and appropriate treatment.
+To gather essential patient information before performing wound care in order to ensure patient safety, correct clinical decisions, and effective communication.
 
-================================================================================
-PATIENT IDENTIFICATION
-================================================================================
+1. INTRODUCTION & PATIENT IDENTIFICATION (MANDATORY)
 
-FIRST STEP - Always verify patient identity:
-• Ask patient to state their full name
-• Verify date of birth
-• Check patient wristband/ID
-• Never assume identity based on bed location
+The student must introduce themselves and verify patient identity before any procedure.
 
-WHY: Prevents treating the wrong patient (serious safety error)
+Required Questions:
 
-================================================================================
-ALLERGY ASSESSMENT
-================================================================================
+“Good morning, I am a nursing student…”
 
-MANDATORY - Ask about allergies:
+“May I know your name, please?”
 
-Questions to ask:
-• "Do you have any allergies to medications?"
-• "Are you allergic to penicillin or other antibiotics?"
-• "Any allergies to tape, adhesives, or latex?"
-• "Have you had reactions to dressings or antiseptics?"
+“Your age, please?”
 
-What to document:
-• The substance (e.g., Penicillin)
-• Type of reaction (rash, swelling, difficulty breathing)
-• When it occurred
+“Your address, please?”
 
-CRITICAL ALLERGIES:
-• Antibiotic allergies (especially penicillin)
-• Latex allergy (affects glove selection)
-• Adhesive/tape allergies (affects dressing choice)
+Why This Is Important:
 
-WHY: Prevents allergic reactions during wound care
+Prevents treating the wrong patient
 
-================================================================================
-PAIN ASSESSMENT
-================================================================================
+Establishes professional rapport
 
-Pain Scale (0-10):
-• 0 = No pain
-• 1-3 = Mild pain
-• 4-6 = Moderate pain
-• 7-10 = Severe pain
+Required for legal and clinical documentation
 
-Questions to ask:
-• "Where is your pain located?"
-• "On a scale of 0-10, how would you rate your pain?"
-• "Can you describe the pain?" (sharp, dull, throbbing, burning)
-• "Is the pain constant or does it come and go?"
-• "Have you taken pain medication today?"
+2. PROCEDURE EXPLANATION & COMMUNICATION
 
-RED FLAGS - Report immediately:
-• Sudden severe pain at wound site
-• Pain score above 7
-• New or worsening pain
+The student should clearly explain:
 
-WHY: Pain assessment ensures patient comfort and can indicate complications
+What procedure will be performed
 
-================================================================================
-MEDICATION HISTORY
-================================================================================
+Why it is needed
 
-Questions to ask:
-• "What medications are you currently taking?"
-• "Have you taken your medications today?"
-• "Are you taking any blood thinners?"
+Use simple, non-technical language
 
-Important medications to note:
-• Blood thinners (warfarin, aspirin) - increased bleeding risk
-• Steroids (prednisone) - slower wound healing
-• Blood pressure medications - patient should take as scheduled
+Example:
 
-WHY: Medications can affect wound healing and procedure safety
+“The doctor has prescribed cleaning your wound and applying a dressing to help it heal.”
 
-================================================================================
-SURGICAL HISTORY
-================================================================================
+Why This Is Important:
 
-Questions to ask:
-• "What surgery did you have?"
-• "When was your surgery?" (which post-operative day)
-• "Who was your surgeon?"
-• "Where is the surgical wound located?"
+Reduces patient anxiety
 
-Information needed:
-• Type of surgery performed
-• Date of surgery
-• Location of surgical incision
-• Type of wound closure (sutures, staples, etc.)
+Improves cooperation and trust
 
-WHY: Understanding the surgery guides appropriate wound care
+3. ALLERGY ASSESSMENT (CRITICAL SAFETY STEP)
 
-================================================================================
-MEDICAL HISTORY
-================================================================================
+The student must ask about allergies before wound care.
 
-Ask about conditions that affect wound healing:
-• Diabetes - affects healing, increases infection risk
-• High blood pressure - affects circulation
-• Smoking - impairs healing
+Required Question:
 
-WHY: These conditions require extra care during wound management
+“Do you have any history of allergy to medications or plasters?”
 
-================================================================================
-COMMUNICATION BEST PRACTICES
-================================================================================
+What to Identify:
 
+Medication allergies (e.g., penicillin)
+
+Dressing, tape, or latex allergies
+
+Why This Is Important:
+
+Prevents allergic reactions
+
+Directly affects dressing and solution choice
+
+4. PAIN ASSESSMENT
+
+Pain should be assessed before starting the procedure.
+
+Required Question:
+
+“Do you feel any pain at the wound site?”
+
+Expected Information:
+
+Pain presence
+
+Pain severity (mild, moderate, severe)
+
+Why This Is Important:
+
+Ensures patient comfort
+
+Severe pain may indicate complications
+
+5. BASIC NEEDS ASSESSMENT
+
+The student should ensure the patient is comfortable before beginning.
+
+Required Question:
+
+“Do you need to go to the bathroom or is there anything you need before we start?”
+
+Why This Is Important:
+
+Prevents interruption during procedure
+
+Demonstrates patient-centered care
+
+6. PROFESSIONAL COMMUNICATION PRINCIPLES
 DO:
-• Introduce yourself: "I'm [Name], a nursing student"
-• Use simple, clear language (not medical jargon)
-• Make eye contact and listen actively
-• Ask open-ended questions: "Tell me about your pain"
-• Show empathy: "I understand this may be uncomfortable"
-• Explain what you will do: "I'm going to check your wound"
-• Ask if patient has questions
 
-DON'T:
-• Rush the conversation
-• Use complicated medical terms
-• Interrupt the patient
-• Dismiss patient concerns
-• Assume the patient understands
+✔ Introduce yourself
+✔ Speak clearly and politely
+✔ Explain each step
+✔ Ask if the patient is comfortable
 
-================================================================================
-WHAT TO DOCUMENT
-================================================================================
+DO NOT:
 
-Record:
-✓ Patient name and ID verified
-✓ Allergies (type and reaction)
-✓ Pain location and score (0-10)
-✓ Current medications
-✓ Surgery type and date
-✓ Relevant medical history
-✓ Any patient concerns
+✘ Rush the patient
+✘ Assume information
+✘ Ignore patient concerns
 
-================================================================================
-SUMMARY CHECKLIST
-================================================================================
+7. SUMMARY CHECKLIST (EVALUATION BASIS)
 
-Before proceeding to wound care, confirm you have:
+Before proceeding, the student should have:
 
+☑ Introduced themselves
 ☑ Verified patient identity
+☑ Explained the procedure
 ☑ Asked about allergies
-☑ Assessed pain level
-☑ Reviewed current medications
-☑ Confirmed surgical details
-☑ Noted medical history
-☑ Answered patient questions
-☑ Documented all information
+☑ Assessed pain
+☑ Checked basic needs
 
-================================================================================
+Failure to complete these steps should be flagged by evaluator agents.
+
 KEY PRINCIPLES
-================================================================================
 
-1. SAFETY FIRST - Always verify identity and allergies
-2. LISTEN to the patient - They know their body best
-3. BE PROFESSIONAL - Maintain respectful communication
-4. DOCUMENT EVERYTHING - If not documented, it wasn't done
+Patient safety comes first
 
-================================================================================
+Clear communication improves care quality
+
+All findings must be based on patient responses
+
+If it is not asked, it is considered not done
+
 END OF GUIDELINES
-================================================================================

@@ -10,7 +10,6 @@ from app.utils.schema import EvaluatorResponse
 from app.services.conversation_manager import ConversationManager
 from app.utils.feedback_schema import Feedback
 
-# NEW (Week-9)
 from app.agents.feedback_narrator_agent import FeedbackNarratorAgent
 
 
@@ -69,11 +68,15 @@ class EvaluationService:
         elif step in [Step.CLEANING.value, Step.DRESSING.value]:
             action_events = session.get("action_events", [])
 
-        rag_query = transcript or (
-            f"{step} procedure actions"
-            if action_events
-            else "clinical nursing evaluation"
-        )
+        # Step-specific RAG queries for accurate guideline retrieval
+        rag_query_map = {
+            Step.HISTORY.value: "patient history taking guidelines nursing communication assessment questions",
+            Step.ASSESSMENT.value: "wound assessment guidelines evaluation criteria",
+            Step.CLEANING.value: "wound cleaning procedure protocol hand hygiene aseptic technique",
+            Step.DRESSING.value: "wound dressing application procedure sterile technique",
+        }
+        
+        rag_query = rag_query_map.get(step, "clinical nursing evaluation guidelines")
 
         rag = await retrieve_with_rag(
             query=rag_query,
@@ -105,7 +108,7 @@ class EvaluationService:
         if not session:
             raise ValueError("Session not found")
 
-        # ---- Convert step string → enum ----
+        # ---- Convert step string â†’ enum ----
         current_step = Step(session["current_step"])
 
         # ---- Coordinator aggregation (NUMERIC ONLY) ----
