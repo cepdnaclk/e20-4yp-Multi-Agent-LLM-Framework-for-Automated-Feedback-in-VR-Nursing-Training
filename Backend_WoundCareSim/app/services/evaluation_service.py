@@ -80,6 +80,8 @@ class EvaluationService:
             scenario_id=session["scenario_id"]
         )
 
+        print(f"RAG Context for step {step}:\n{rag.get('text', '')}\n{'-'*40}")
+
         return {
             "step": step,
             "scenario_metadata": scenario_metadata,
