@@ -13,10 +13,7 @@
     ],
 
     "allergies": [
-      {
-        "substance": "Penicillin",
-        "reaction": "Not specified"
-      }
+      "Penicillin"
     ],
 
     "current_medications": [
