@@ -6,40 +6,56 @@
     "name": "Mr. Sunil Perera",
     "age": 52,
     "gender": "Male",
-    "address": "Hindagala",
+    "address": "No. 45, Kandy Road, Hindagala, Kandy",
 
     "medical_history": [
-      "Hypertension"
+      "Hypertension",
+      "Type 2 Diabetes (controlled with medication)"
     ],
 
     "allergies": [
-      "Penicillin"
+      "Penicillin (causes rash and itching)",
+      "Latex (causes skin irritation)"
     ],
 
     "current_medications": [
-      "Amlodipine 5mg daily"
+      "Amlodipine 5mg daily (for hypertension)",
+      "Metformin 500mg twice daily (for diabetes)"
     ],
 
     "surgery_details": {
       "procedure": "Open reduction and internal fixation of left forearm fracture",
-      "date": "2025-01-10",
+      "date": "2025-02-03",
       "surgeon": "Dr. K. Fernando",
-      "reason": "Fractured left forearm from a fall"
+      "reason": "Fractured left forearm from a fall at home",
+      "hospital": "Teaching Hospital Kandy"
     },
 
     "pain_level": {
-      "description": "Mild pain at the surgical site",
-      "pain_score": 2,
-      "pain_characteristics": "Dull, achy pain that worsens with movement"
+      "description": "Mild to moderate pain at the surgical site",
+      "pain_score": 4,
+      "pain_characteristics": "Dull, achy pain that worsens with movement",
+      "pain_medication": "Paracetamol 500mg as needed",
+      "last_pain_medication": "6 hours ago"
+    },
+
+    "comfort_needs": {
+      "current_position": "Sitting upright in bed",
+      "needs_bathroom": false,
+      "needs_water": false,
+      "comfortable_to_proceed": true
     }
   },
 
   "wound_details": {
-    "location": "Left forearm",
-    "wound_type": "Clean surgical wound",
+    "location": "Left forearm, external surface (lateral aspect)",
+    "wound_type": "Clean surgical wound (Class I)",
     "appearance": "Sutured incision with no visible discharge",
     "size": "Approximately 8 cm linear incision",
-    "wound_age": "5 days post-operative"
+    "wound_age": "5 days post-operative",
+    "suture_type": "Non-absorbable interrupted sutures",
+    "expected_healing": "Primary intention healing",
+    "dressing_status": "Primary dressing in place, appears dry and intact"
   },
 
   "assessment_questions": [
