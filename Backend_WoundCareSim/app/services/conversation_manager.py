@@ -6,10 +6,6 @@ class ConversationManager:
     """
     Manages multi-turn conversation history per session and step.
 
-    Week-7:
-    - Used only for HISTORY step
-    - Stores student ↔ patient turns
-    - No evaluation logic
     """
 
     def __init__(self):

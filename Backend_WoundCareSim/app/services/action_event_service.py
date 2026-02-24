@@ -8,12 +8,7 @@ from app.services.session_manager import SessionManager
 class ActionEventService:
     """
     Handles ingestion and storage of student action events.
-
-    Week-7:
-    - Feedback-only
-    - No blocking
-    - No enforcement
-    - Safe for noisy VR inputs
+    
     """
 
     def __init__(self, session_manager: SessionManager):
