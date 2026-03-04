@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import json
 
 from app.agents.agent_base import BaseAgent
@@ -21,7 +21,8 @@ class FeedbackNarratorAgent(BaseAgent):
     async def narrate(
         self,
         raw_feedback: List[Dict[str, Any]],
-        step: str
+        step: str,
+        score: Optional[int] = None
     ) -> NarratedFeedback:
         """
         Generate narrated feedback paragraph from raw agent outputs.
@@ -29,13 +30,14 @@ class FeedbackNarratorAgent(BaseAgent):
         Args:
             raw_feedback: List of agent feedback items
             step: Current procedure step
+            score: Step quality score as a percentage (0-100), optional
             
         Returns:
             NarratedFeedback with single student-facing paragraph
         """
 
         system_prompt = self._build_system_prompt(step)
-        user_prompt = self._build_user_prompt(raw_feedback, step)
+        user_prompt = self._build_user_prompt(raw_feedback, step, score=score)
 
         output_text = await self.run(
             system_prompt=system_prompt,
@@ -74,11 +76,12 @@ RULES:
 1. Write ONE cohesive paragraph (3-5 sentences)
 2. Start with positive acknowledgment if strengths exist
 3. Mention areas for improvement constructively
-4. End with encouraging, forward-looking statement
-5. Use supportive, professional tone
-6. Do NOT add new medical advice
-7. Do NOT contradict the feedback provided
-8. Be specific but concise
+4. Naturally include the step quality score if provided (e.g. "You scored 72 out of 100")
+5. End with encouraging, forward-looking statement
+6. Use supportive, professional tone
+7. Do NOT add new medical advice
+8. Do NOT contradict the feedback provided
+9. Be specific but concise
 
 STRUCTURE:
 - Opening: Acknowledge what student did well (if applicable)
@@ -98,7 +101,7 @@ TONE EXAMPLES:
 - Avoid: "You failed to ask proper questions. Multiple critical errors were detected. This performance is unacceptable."
 """
 
-    def _build_user_prompt(self, raw_feedback: List[Dict[str, Any]], step: str) -> str:
+    def _build_user_prompt(self, raw_feedback: List[Dict[str, Any]], step: str, score: Optional[int] = None) -> str:
         """Build user prompt with raw feedback to narrate."""
         
         # Categorize feedback by agent/category
@@ -117,7 +120,12 @@ TONE EXAMPLES:
             elif category == "clinical":
                 clinical_feedback.append(text)
         
-        prompt = f"STEP: {step}\n\nRAW FEEDBACK TO NARRATE:\n\n"
+        prompt = f"STEP: {step}\n\n"
+
+        if score is not None:
+            prompt += f"STEP QUALITY SCORE: {score}/100\n\n"
+
+        prompt += "RAW FEEDBACK TO NARRATE:\n\n"
         
         if communication_feedback:
             prompt += "COMMUNICATION EVALUATION:\n"
@@ -135,7 +143,8 @@ TONE EXAMPLES:
             "Convert this feedback into ONE supportive paragraph that:\n"
             "1. Acknowledges strengths first (if any)\n"
             "2. Mentions areas for improvement constructively\n"
-            "3. Ends with encouragement\n\n"
+            "3. Naturally includes the step quality score (e.g. 'You achieved a score of X out of 100')\n"
+            "4. Ends with encouragement\n\n"
             "Keep it concise, specific, and educational."
         )
         
