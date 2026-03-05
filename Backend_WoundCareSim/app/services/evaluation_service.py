@@ -197,11 +197,17 @@ class EvaluationService:
         # ----------------------------------------------
         narrated_feedback_dict = None
 
+        score_percentage = None
+        raw_score = scores.get("step_quality_indicator")
+        if raw_score is not None:
+            score_percentage = round(raw_score * 100)
+
         if self.feedback_narrator_agent and raw_feedback_items:
             try:
                 narrated_feedback_obj = await self.feedback_narrator_agent.narrate(
                     raw_feedback=raw_feedback_items,
-                    step=current_step.value
+                    step=current_step.value,
+                    score=score_percentage
                 )
                 if narrated_feedback_obj:
                     narrated_feedback_dict = narrated_feedback_obj.model_dump()
