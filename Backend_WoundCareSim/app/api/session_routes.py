@@ -154,11 +154,19 @@ def get_session_info(session_id: str):
     }
 
 
-def _detect_verification_request(message: str) -> tuple[bool, str]:
+def _detect_verification_request(message: str, pending_material: str = "") -> tuple[bool, str]:
     """
     Detect if student message is a verification request and which material type.
 
     Only determines intent and material type — all actual validation is done by the LLM nurse.
+
+    Args:
+        message: The student's message.
+        pending_material: The material type already established in a prior turn
+                          ("solution", "dressing", or ""). Used as fallback when
+                          the follow-up message doesn't repeat the material name
+                          (e.g. student says "it's sealed and intact" after the
+                          nurse asked for details about the dressing packet).
 
     Returns:
         (is_verification, material_type)
@@ -196,6 +204,10 @@ def _detect_verification_request(message: str) -> tuple[bool, str]:
         material_type = "solution"
     elif has_dressing:
         material_type = "dressing"
+    elif pending_material:
+        # Follow-up message in an ongoing verification conversation —
+        # inherit the material type already established in the prior turn.
+        material_type = pending_material
     else:
         material_type = ""  # LLM nurse will ask which material
 
