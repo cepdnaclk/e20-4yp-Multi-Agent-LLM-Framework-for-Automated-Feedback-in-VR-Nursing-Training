@@ -16,6 +16,7 @@ class SessionManager:
 
     def __init__(self):
         self.sessions: Dict[str, Dict[str, Any]] = {}
+        self._active_session_id: Optional[str] = None
 
     # ----------------------------
     # Session lifecycle
@@ -42,7 +43,7 @@ class SessionManager:
             "logs": [],
             "rag_results": [],
             "action_events": [],
-            "mcq_answers": {},  # NEW: Store MCQ answers for ASSESSMENT step
+            "mcq_answers": {},
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
         }
@@ -59,6 +60,34 @@ class SessionManager:
         if not token:
             return False
         return secrets.compare_digest(session.get("session_token", ""), token)
+
+    # ----------------------------
+    # Active session (VR headset join)
+    # ----------------------------
+
+    def set_active_session(self, session_id: str) -> None:
+        """Mark a session as the currently active VR session."""
+        self._active_session_id = session_id
+
+    def get_active_session(self) -> Optional[Dict[str, Any]]:
+        """
+        Return (session_id, session_token) for the active session,
+        or None if no session is currently active.
+        """
+        if not self._active_session_id:
+            return None
+        session = self.sessions.get(self._active_session_id)
+        if not session:
+            self._active_session_id = None
+            return None
+        return {
+            "session_id": self._active_session_id,
+            "session_token": session.get("session_token"),
+        }
+
+    def clear_active_session(self) -> None:
+        """Deactivate the current active session (e.g. after completion)."""
+        self._active_session_id = None
 
     # ----------------------------
     # Evaluation & logging

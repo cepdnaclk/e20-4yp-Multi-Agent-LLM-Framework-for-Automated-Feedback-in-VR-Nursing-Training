@@ -122,14 +122,34 @@ async def _safe_tts(text: str, role: str) -> Optional[Dict[str, Any]]:
 @router.post("/start")
 def start_session(payload: StartSessionRequest):
     """
-    Start a new training session.
+    Start a new training session and mark it as the active VR session.
+    Called by the teacher portal. The VR headset then joins via GET /session/active.
     """
     session_id = session_manager.create_session(
         scenario_id=payload.scenario_id,
         student_id=payload.student_id
     )
+    session_manager.set_active_session(session_id)
     print(f"\n[STEP START] current_step=history\n")
-    return {"session_id": session_id, "session_token": session_manager.get_session(session_id).get("session_token")}
+    return {
+        "session_id": session_id,
+        "session_token": session_manager.get_session(session_id).get("session_token"),
+    }
+
+
+@router.get("/active")
+def get_active_session():
+    """
+    Return the currently active session for the VR headset to join.
+    The VR client polls this endpoint on startup until a teacher starts a session.
+
+    Returns session_id + session_token on success, or an error key when no
+    session is active so the client knows to keep retrying.
+    """
+    active = session_manager.get_active_session()
+    if not active:
+        return {"session_id": None, "session_token": None, "error": "no_active_session"}
+    return active
 
 
 @router.get("/{session_id}")
@@ -487,6 +507,7 @@ async def complete_step(payload: CompleteStepInput):
 
     if next_step == Step.COMPLETED.value:
         print(f"[LOG] Session {payload.session_id} completed. All steps were saved incrementally.")
+        session_manager.clear_active_session()
 
     return response
 

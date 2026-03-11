@@ -15,7 +15,7 @@ from openai import OpenAI
 
 # Load environment variables from .env in this folder
 BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(BASE_DIR / ".env")
+load_dotenv(BASE_DIR.parent / ".env")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 VECTOR_STORE_ID = os.getenv("VECTOR_STORE_ID", "")
