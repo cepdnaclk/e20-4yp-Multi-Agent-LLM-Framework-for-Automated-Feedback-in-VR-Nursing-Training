@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Alert, Button, Stack } from "@mui/material";
 
 import ScenarioCard from "../components/ScenarioCard.jsx";
-import { getScenarioById, getScenarios } from "../api/backend.js";
+import { getScenarios } from "../api/backend.js";
 
 export default function ScenarioList() {
   const navigate = useNavigate();
   const [scenarios, setScenarios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [detailId, setDetailId] = useState("");
-  const [detailData, setDetailData] = useState({});
-
   async function handleLoadScenarios() {
     setLoading(true);
     setError("");
@@ -29,37 +27,24 @@ export default function ScenarioList() {
     handleLoadScenarios();
   }, []);
 
-  async function toggleDetails(scenarioId) {
-    if (detailId === scenarioId) {
-      setDetailId("");
-      return;
-    }
-
-    setError("");
-    try {
-      const data = await getScenarioById(scenarioId);
-      setDetailData((current) => ({ ...current, [scenarioId]: data }));
-      setDetailId(scenarioId);
-    } catch (err) {
-      setError(err.response?.data?.detail || err.message || "Failed to load scenario");
-    }
-  }
-
   return (
     <section className="page-grid">
       <div className="page-header">
         <div>
           <h1>Scenario List</h1>
-          <p>Load the scenario catalog, inspect the JSON, or jump straight to session launch.</p>
+          <p>Browse saved scenarios, open them in the structured viewer, or launch VR sessions.</p>
         </div>
-        <div className="button-row">
-          <button className="btn btn-primary" onClick={handleLoadScenarios}>
+        <Stack direction="row" spacing={1.5}>
+          <Button variant="contained" onClick={handleLoadScenarios}>
             {loading ? "Loading..." : "Refresh Scenarios"}
-          </button>
-        </div>
+          </Button>
+          <Button variant="outlined" onClick={() => navigate("/scenarios/create")}>
+            New Scenario
+          </Button>
+        </Stack>
       </div>
 
-      {error && <div className="status error">{error}</div>}
+      {error && <Alert severity="error">{error}</Alert>}
 
       <div className="scenario-list">
         {scenarios.length === 0 ? (
@@ -71,14 +56,13 @@ export default function ScenarioList() {
             <ScenarioCard
               key={scenario.scenario_id}
               scenario={scenario}
-              onViewDetails={() => toggleDetails(scenario.scenario_id)}
+              onView={() => navigate(`/scenarios/${scenario.scenario_id}`)}
+              onEdit={() => navigate(`/scenarios/${scenario.scenario_id}/edit`)}
               onStart={() =>
                 navigate("/sessions/start", {
                   state: { scenarioId: scenario.scenario_id },
                 })
               }
-              detailsOpen={detailId === scenario.scenario_id}
-              details={detailData[scenario.scenario_id]}
             />
           ))
         )}

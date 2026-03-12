@@ -1,33 +1,36 @@
-export default function ScenarioCard({
-  scenario,
-  onStart,
-  onViewDetails,
-  detailsOpen = false,
-  details = null,
-}) {
+import { Card, CardActions, CardContent, Button, Chip, Stack, Typography } from "@mui/material";
+
+export default function ScenarioCard({ scenario, onView, onEdit, onStart }) {
   return (
-    <article className="card">
-      <div className="scenario-card-header">
-        <div>
-          <div className="scenario-meta">Scenario ID</div>
-          <h3>{scenario.scenario_id}</h3>
-          <p>{scenario.title}</p>
-        </div>
-        <div className="button-row">
-          <button className="btn btn-secondary" onClick={onViewDetails}>
-            {detailsOpen ? "Hide Details" : "View Details"}
-          </button>
-          <button className="btn btn-primary" onClick={onStart}>
-            Start Session
-          </button>
-        </div>
-      </div>
-      <p>{scenario.description || "No description provided."}</p>
-      {detailsOpen && details && (
-        <div className="detail-box">
-          <pre>{JSON.stringify(details, null, 2)}</pre>
-        </div>
-      )}
-    </article>
+    <Card sx={{ borderRadius: 4 }}>
+      <CardContent>
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
+          <div>
+            <Typography variant="overline" color="text.secondary">
+              Scenario ID
+            </Typography>
+            <Typography variant="h6">{scenario.scenario_id}</Typography>
+            <Typography variant="body1" sx={{ mt: 1 }}>
+              {scenario.title}
+            </Typography>
+          </div>
+          <Chip label="Ready for VR" color="success" variant="outlined" />
+        </Stack>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          {scenario.description || "No description provided."}
+        </Typography>
+      </CardContent>
+      <CardActions sx={{ px: 2, pb: 2 }}>
+        <Button variant="outlined" onClick={onView}>
+          View
+        </Button>
+        <Button variant="outlined" onClick={onEdit}>
+          Edit
+        </Button>
+        <Button variant="contained" onClick={onStart}>
+          Start Session
+        </Button>
+      </CardActions>
+    </Card>
   );
 }

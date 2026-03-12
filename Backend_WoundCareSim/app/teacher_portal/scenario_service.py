@@ -14,6 +14,7 @@ def _normalize_scenario_document(
     title: str,
     description: str,
     scenario_data: Dict[str, Any],
+    existing: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     normalized = dict(scenario_data)
     normalized["scenario_id"] = scenario_id
@@ -26,7 +27,12 @@ def _normalize_scenario_document(
         normalized.get("vector_store_namespace") or scenario_id
     )
     normalized["evaluation_criteria"] = normalized.get("evaluation_criteria") or {}
-    normalized["created_at"] = normalized.get("created_at") or datetime.utcnow().isoformat()
+    normalized["created_at"] = (
+        normalized.get("created_at")
+        or (existing or {}).get("created_at")
+        or datetime.utcnow().isoformat()
+    )
+    normalized["updated_at"] = datetime.utcnow().isoformat()
 
     validate_scenario_payload(normalized)
     return normalized
@@ -48,6 +54,28 @@ async def create_scenario(payload: Dict[str, Any]) -> Dict[str, Any]:
     doc_ref.set(normalized)
     return {
         "message": "Scenario created successfully",
+        "scenario_id": payload["scenario_id"],
+    }
+
+
+async def update_scenario(payload: Dict[str, Any]) -> Dict[str, Any]:
+    db = get_firestore_client()
+    doc_ref = db.collection(COLLECTION).document(payload["scenario_id"])
+    existing_snapshot = doc_ref.get()
+    if not existing_snapshot.exists:
+        raise ValueError(f"Scenario '{payload['scenario_id']}' does not exist")
+
+    existing = existing_snapshot.to_dict() or {}
+    normalized = _normalize_scenario_document(
+        scenario_id=payload["scenario_id"],
+        title=payload["title"],
+        description=payload["description"],
+        scenario_data=payload["scenario_data"],
+        existing=existing,
+    )
+    doc_ref.set(normalized)
+    return {
+        "message": "Scenario updated successfully",
         "scenario_id": payload["scenario_id"],
     }
 

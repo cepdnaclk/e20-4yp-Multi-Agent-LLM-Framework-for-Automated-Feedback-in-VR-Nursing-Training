@@ -19,6 +19,11 @@ export async function createScenario(data) {
   return response.data;
 }
 
+export async function updateScenario(data) {
+  const response = await API.post("/teacher/scenario/update", data);
+  return response.data;
+}
+
 export async function startSession(data) {
   const response = await API.post("/session/start", data);
   return response.data;

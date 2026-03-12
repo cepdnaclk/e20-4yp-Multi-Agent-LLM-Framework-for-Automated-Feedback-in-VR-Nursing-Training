@@ -1,10 +1,11 @@
 from fastapi import APIRouter, File, HTTPException, UploadFile, status
 
-from app.teacher_portal.schemas import ScenarioCreate
+from app.teacher_portal.schemas import ScenarioCreate, ScenarioUpdate
 from app.teacher_portal.scenario_service import (
     create_scenario,
     get_scenario,
     list_scenarios,
+    update_scenario,
 )
 from app.teacher_portal.vector_store_service import upload_guideline_file
 
@@ -31,6 +32,14 @@ async def get_teacher_scenario(scenario_id: str):
         return await get_scenario(scenario_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.post("/scenario/update")
+async def update_teacher_scenario(payload: ScenarioUpdate):
+    try:
+        return await update_scenario(payload.model_dump())
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @router.post("/vector/upload")
