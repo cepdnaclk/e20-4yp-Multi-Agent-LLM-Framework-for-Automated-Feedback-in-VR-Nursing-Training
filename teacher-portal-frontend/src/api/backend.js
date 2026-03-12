@@ -35,3 +35,13 @@ export async function uploadGuideline(file) {
   const response = await API.post("/teacher/vector/upload", form);
   return response.data;
 }
+
+export async function getStudentSessions(studentId) {
+  const response = await API.get(`/teacher/student/${studentId}/sessions`);
+  return response.data;
+}
+
+export async function getSessionDetail(studentId, sessionId) {
+  const response = await API.get(`/teacher/student/${studentId}/sessions/${sessionId}`);
+  return response.data;
+}

@@ -5,6 +5,7 @@ const navItems = [
   { to: "/scenarios", label: "Scenarios" },
   { to: "/scenarios/create", label: "Create" },
   { to: "/sessions/start", label: "Start Session" },
+  { to: "/students", label: "Students" },
   { to: "/guidelines/upload", label: "Guidelines" },
 ];
 
