@@ -515,8 +515,21 @@ async def websocket_endpoint(session_id: str, websocket: WebSocket):
                 next_step = session_manager.advance_step(session_id)
 
                 if next_step == Step.CLEANING_AND_DRESSING.value:
+                    _clinical_context = session.get("clinical_context", {})
+                    _risk_factors = _clinical_context.get("risk_factors", [])
+
+                    cleaning_query = (
+                        "wound cleaning and dressing preparation steps sequence "
+                        "prerequisites required actions"
+                    )
+                    if "diabetes" in _risk_factors:
+                        cleaning_query += (
+                            " diabetic patient infection risk impaired immune response "
+                            "elevated contamination risk aseptic technique"
+                        )
+
                     rag_result = await retrieve_with_rag(
-                        query="wound cleaning and dressing preparation steps sequence prerequisites required actions",
+                        query=cleaning_query,
                         scenario_id=session["scenario_id"],
                     )
                     rag_text = rag_result.get("text", "")
@@ -540,8 +553,21 @@ async def websocket_endpoint(session_id: str, websocket: WebSocket):
                 next_step = session_manager.advance_step(session_id)
 
                 if next_step == Step.CLEANING_AND_DRESSING.value:
+                    _clinical_context = session.get("clinical_context", {})
+                    _risk_factors = _clinical_context.get("risk_factors", [])
+
+                    cleaning_query = (
+                        "wound cleaning and dressing preparation steps sequence "
+                        "prerequisites required actions"
+                    )
+                    if "diabetes" in _risk_factors:
+                        cleaning_query += (
+                            " diabetic patient infection risk impaired immune response "
+                            "elevated contamination risk aseptic technique"
+                        )
+
                     rag_result = await retrieve_with_rag(
-                        query="wound cleaning and dressing preparation steps sequence prerequisites required actions",
+                        query=cleaning_query,
                         scenario_id=session["scenario_id"],
                     )
                     rag_text = rag_result.get("text", "")
