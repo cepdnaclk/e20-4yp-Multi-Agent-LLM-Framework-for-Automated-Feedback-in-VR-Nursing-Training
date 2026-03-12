@@ -4,6 +4,7 @@ from app.api.session_routes import router as session_router
 from app.api.scenario_routes import router as scenario_router
 from app.api.audio_routes import router as audio_router
 from app.api.websocket_routes import router as websocket_router
+from app.api.student_routes import router as student_router
 from app.teacher_portal.teacher_routes import router as teacher_router
 
 app = FastAPI(
@@ -26,6 +27,7 @@ def health():
 app.include_router(session_router)
 app.include_router(scenario_router)
 app.include_router(audio_router)
+app.include_router(student_router)
 
 app.include_router(websocket_router)
 app.include_router(teacher_router)

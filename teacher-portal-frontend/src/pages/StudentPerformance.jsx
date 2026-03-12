@@ -104,10 +104,10 @@ export default function StudentPerformance() {
 }
 
 function SessionSummaryCard({ session, onView }) {
-  // Session data comes from the full session document (steps + session meta)
+  // Session data comes from the full session document (steps + session meta) or the lightweight summary
   const sessionMeta = session.session || session;
-  const overallSummary = session.overall_summary || {};
-  const cleaningPrep = overallSummary.cleaning_preparation || {};
+  const overallSummary = session.overall_summary || session;
+  const cleaningPrep = overallSummary.cleaning_preparation || session;
 
   const isCompleted = sessionMeta.final_step_reached === "completed";
 
