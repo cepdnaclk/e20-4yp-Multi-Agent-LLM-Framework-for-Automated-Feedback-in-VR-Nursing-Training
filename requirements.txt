@@ -11,3 +11,12 @@ pydub
 pytest
 pytest-asyncio
 httpx
+matplotlib
+groq
+jiwer
+librosa
+numpy
+pandas
+pydub
+seaborn
+soundfile

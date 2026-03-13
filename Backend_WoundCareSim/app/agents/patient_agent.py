@@ -39,6 +39,29 @@ class PatientAgent(BaseAgent):
             f"The wound is a result of the surgical procedure.\n"
         )
 
+    def _fallback_response(self, patient_history: Dict, student_message: str) -> str:
+        """
+        Return a safe non-LLM fallback when the model call fails.
+        """
+        message = student_message.lower()
+        name = patient_history.get("name", "the patient")
+        allergies = patient_history.get("allergies", [])
+        pain = patient_history.get("pain_level", {})
+        pain_description = pain.get("description") or "There is some discomfort around the wound."
+        pain_score = pain.get("pain_score")
+
+        if "name" in message or "who are you" in message:
+            return f"My name is {name}."
+        if "allerg" in message:
+            if allergies:
+                return f"I have allergies to {', '.join(allergies)}."
+            return "I do not have any known allergies."
+        if "pain" in message or "hurt" in message:
+            if pain_score is not None:
+                return f"{pain_description} I would rate it {pain_score} out of 10."
+            return pain_description
+        return "I am not sure, but I can answer based on what I know about my condition."
+
     async def respond(
         self,
         patient_history: Dict,
@@ -95,8 +118,11 @@ class PatientAgent(BaseAgent):
             "Respond as the patient using ONLY the information provided above."
         )
 
-        return await self.run(
+        response = await self.run(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
             temperature=0.0  # deterministic & scenario-faithful
         )
+        if not response or response.strip() in {"{}", "[]"}:
+            return self._fallback_response(patient_history, student_message)
+        return response
