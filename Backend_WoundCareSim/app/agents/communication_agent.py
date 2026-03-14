@@ -335,6 +335,9 @@ class CommunicationAgent(BaseAgent):
                                 "listen carefully", "state your", "or not"]
         empathy_markers      = ["how are you feeling", "i understand", "thank you for",
                                 "i am sorry", "comfort", "that must be", "i will be gentle"]
+        explanation_markers  = ["i would like to ask", "i am going to ask", "i'd like to ask",
+                                "i need to ask", "i will ask", "let me explain",
+                                "i am here to ask", "before we begin", "to understand"]
         open_question_tokens = ["tell me", "can you describe", "how would you", "what is",
                                 "how has", "could you explain"]
         closing_markers      = ["thank you", "we will now", "next we will", "i will now",
@@ -344,6 +347,7 @@ class CommunicationAgent(BaseAgent):
         has_intro        = any(m in joined for m in intro_markers)
         has_rude         = any(m in joined for m in rude_markers)
         has_empathy      = any(m in joined for m in empathy_markers)
+        has_explanation  = any(m in joined for m in explanation_markers)
         has_open_q       = any(m in joined for m in open_question_tokens)
         has_closing      = any(m in joined for m in closing_markers)
         asks_questions   = ("?" in student_input or
@@ -376,6 +380,11 @@ class CommunicationAgent(BaseAgent):
         else:
             issues.append("No empathetic language or reassurance was observed")
 
+        if has_explanation:
+            strengths.append("Explained the purpose or flow of the interaction to the patient")
+        else:
+            issues.append("Did not clearly explain the purpose of the interaction to the patient")
+
         if has_closing:
             strengths.append("Provided a professional closing remark")
         else:
@@ -383,13 +392,13 @@ class CommunicationAgent(BaseAgent):
 
         # Verdict
         if has_rude:
-            issues.insert(0, "Tone included rude, dismissive, or pressuring language")
+            issues.insert(0, "Tone included abrupt or pressuring language")
             verdict = "Inappropriate"
         elif num_turns < self.MIN_TURNS_PARTIAL:
             issues.insert(0, f"Very limited engagement — only {num_turns} student turn(s) recorded")
             verdict = "Inappropriate"
-        elif (has_greeting and has_intro and has_empathy
-              and asks_questions and num_turns >= self.MIN_TURNS_APPROPRIATE):
+        elif (has_greeting and has_intro and has_explanation
+              and asks_questions and num_turns >= self.MIN_TURNS_PARTIAL):
             verdict = "Appropriate"
         elif asks_questions or has_greeting:
             verdict = "Partially Appropriate"

@@ -92,7 +92,9 @@ def build_rag_context(
     extra_focus: str = "",
 ) -> Dict[str, Any]:
     wound_details = scenario_metadata.get("wound_details") or {}
-    patient_history = scenario_metadata.get("patient_history") or {}
+    patient_history = scenario_metadata.get("patient_history")
+    if not isinstance(patient_history, dict):
+        patient_history = {}
     action_events = action_events or []
 
     return {
