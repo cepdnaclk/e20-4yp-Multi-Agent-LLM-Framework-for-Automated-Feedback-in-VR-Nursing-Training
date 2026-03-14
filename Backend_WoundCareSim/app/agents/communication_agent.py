@@ -83,7 +83,8 @@ class CommunicationAgent(BaseAgent):
             user_prompt=user_prompt,
         )
 
-        return self._parse_response(raw_response, current_step, student_input)
+        parsed_response = self._parse_response(raw_response, current_step, student_input)
+        return self._reconcile_verdict_with_transcript(parsed_response, student_input)
 
     # ------------------------------------------------------------------
     # Prompt construction
@@ -314,6 +315,65 @@ class CommunicationAgent(BaseAgent):
     # Heuristic fallback (no LLM parsing)
     # ------------------------------------------------------------------
 
+    def _reconcile_verdict_with_transcript(
+        self,
+        response: EvaluatorResponse,
+        student_input: str,
+    ) -> EvaluatorResponse:
+        reconciled_verdict = self._deterministic_transcript_verdict(student_input)
+        if reconciled_verdict == response.verdict:
+            return response
+
+        payload = response.model_dump()
+        payload["verdict"] = reconciled_verdict
+        return EvaluatorResponse(**payload)
+
+    def _deterministic_transcript_verdict(self, student_input: str) -> str:
+        student_lines = [
+            line.split(":", 1)[1].strip().lower() if ":" in line else line.strip().lower()
+            for line in student_input.splitlines()
+            if line.strip().lower().startswith("student:")
+        ]
+        if not student_lines:
+            return "Inappropriate"
+
+        joined = " ".join(student_lines)
+        num_turns = len(student_lines)
+
+        greeting_markers = ["hello", "good morning", "good afternoon", "good evening", "hi", "hey"]
+        intro_markers = ["i am your nurse", "i am your student nurse", "i am the nursing student", "my name is"]
+        explanation_markers = ["i will explain", "i am going to", "before we begin", "next steps", "procedure"]
+        severe_rude_markers = ["answer quickly", "i do not have time", "listen carefully", "or not"]
+        mild_abrupt_markers = ["state your", "get this over with"]
+        clinical_markers = [
+            "allerg", "pain", "wound", "dressing", "medical", "diabetes", "healing",
+            "glucose", "circulation", "surgery", "procedure", "recovery", "identity",
+            "name", "date of birth", "hospital number", "inspect", "assess",
+        ]
+        off_topic_markers = ["weather", "cricket", "favorite food", "where do you live"]
+
+        has_greeting = any(marker in joined for marker in greeting_markers)
+        has_intro = any(marker in joined for marker in intro_markers)
+        has_explanation = any(marker in joined for marker in explanation_markers)
+        has_severe_rudeness = any(marker in joined for marker in severe_rude_markers)
+        has_mild_abruptness = any(marker in joined for marker in mild_abrupt_markers)
+        has_clinical_focus = any(marker in joined for marker in clinical_markers)
+        has_off_topic_content = any(marker in joined for marker in off_topic_markers)
+
+        if has_severe_rudeness or has_off_topic_content or not has_clinical_focus:
+            return "Inappropriate"
+
+        if has_mild_abruptness:
+            return "Partially Appropriate"
+
+        if num_turns >= 3 and (has_greeting or has_intro or has_explanation):
+            return "Appropriate"
+
+        if num_turns >= 4 and has_clinical_focus:
+            return "Appropriate"
+
+        return "Partially Appropriate"
+
     def _heuristic_fallback(self, current_step: str, student_input: str) -> EvaluatorResponse:
         """
         Deterministic keyword-based fallback used only when LLM output
@@ -394,16 +454,10 @@ class CommunicationAgent(BaseAgent):
         if has_rude:
             issues.insert(0, "Tone included abrupt or pressuring language")
             verdict = "Inappropriate"
-        elif num_turns < self.MIN_TURNS_PARTIAL:
-            issues.insert(0, f"Very limited engagement — only {num_turns} student turn(s) recorded")
-            verdict = "Inappropriate"
-        elif (has_greeting and has_intro and has_explanation
-              and asks_questions and num_turns >= self.MIN_TURNS_PARTIAL):
-            verdict = "Appropriate"
-        elif asks_questions or has_greeting:
-            verdict = "Partially Appropriate"
         else:
-            verdict = "Inappropriate"
+            verdict = self._deterministic_transcript_verdict(student_input)
+            if verdict == "Inappropriate" and num_turns < self.MIN_TURNS_PARTIAL:
+                issues.insert(0, f"Very limited engagement — only {num_turns} student turn(s) recorded")
 
         # Ensure at least one issue is always present
         if not issues:
