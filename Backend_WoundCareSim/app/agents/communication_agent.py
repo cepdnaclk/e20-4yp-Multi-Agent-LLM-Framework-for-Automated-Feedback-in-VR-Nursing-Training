@@ -415,7 +415,7 @@ class CommunicationAgent(BaseAgent):
             strengths=strengths[:4],
             issues_detected=issues[:4],
             explanation=(
-                "Heuristic fallback was used because the LLM evaluator response could not be parsed. "
+                "Fallback heuristic was used because the LLM evaluator response could not be parsed. "
                 "Verdict was determined from greeting, introduction, empathy, questioning technique, "
                 "and closing markers in the transcript."
             ),
