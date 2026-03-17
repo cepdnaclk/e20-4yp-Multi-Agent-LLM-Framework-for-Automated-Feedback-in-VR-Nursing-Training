@@ -31,7 +31,7 @@ A dedicated **Teacher Portal** allows clinical educators to create and manage sc
 
 ## System Architecture
 
-![System Architecture](code/diagram.png)
+![System Architecture](docs/images/diagram.png)
 
 ---
 
